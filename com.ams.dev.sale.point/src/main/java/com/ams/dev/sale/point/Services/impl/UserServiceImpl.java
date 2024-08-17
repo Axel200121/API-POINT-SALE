@@ -1,6 +1,7 @@
 package com.ams.dev.sale.point.Services.impl;
 
 import com.ams.dev.sale.point.Dtos.ApiResponseDto;
+import com.ams.dev.sale.point.Dtos.TokenDto;
 import com.ams.dev.sale.point.Dtos.UserDto;
 import com.ams.dev.sale.point.Entities.Role;
 import com.ams.dev.sale.point.Entities.User;
@@ -8,16 +9,18 @@ import com.ams.dev.sale.point.Mappers.RoleMapper;
 import com.ams.dev.sale.point.Mappers.UserMapper;
 import com.ams.dev.sale.point.Repositories.RoleRepository;
 import com.ams.dev.sale.point.Repositories.UserRepository;
-import com.ams.dev.sale.point.Services.RoleService;
 import com.ams.dev.sale.point.Services.UserService;
+import com.ams.dev.sale.point.security.jwt.JwtService;
+import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,6 +39,15 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+
     @Override
     public ApiResponseDto createUser(UserDto userDto) {
         Optional<User> userBD = userRepository.findByEmail(userDto.getEmail().toLowerCase());
@@ -48,7 +60,18 @@ public class UserServiceImpl implements UserService {
 
         Optional<Role> assignRole = roleRepository.findById(userDto.getRole().getId());
         Role role = assignRole.get();
-        User userSave = userRepository.save(userMapper.toEntity(userDto,role));
+        User user = new User();
+
+        user.setName(userDto.getName());
+        user.setLastName(userDto.getLastName());
+        user.setPhone(userDto.getPhone());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setAddress(userDto.getAddress());
+        user.setRole(role);
+        user.setUpdatedAt(new Date());
+
+        User userSave = userRepository.save(user);
         return new ApiResponseDto<>(HttpStatus.CREATED.value(),"Usuario registrado exitosamente",userMapper.toDto(userSave));
     }
 
@@ -68,7 +91,7 @@ public class UserServiceImpl implements UserService {
         editUser.setLastName(userDto.getLastName());
         editUser.setPhone(userDto.getPhone());
         editUser.setEmail(userDto.getEmail());
-        editUser.setPassword(userDto.getPassword());
+        editUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         editUser.setAddress(userDto.getAddress());
         editUser.setRole(roleBD.get());
         editUser.setUpdatedAt(new Date());
@@ -106,6 +129,27 @@ public class UserServiceImpl implements UserService {
         List<UserDto> userDtoList = userList.stream().map(userMapper::toDto).collect(Collectors.toList());
 
         return new ApiResponseDto<>(HttpStatus.OK.value(),"Listado de usuarios del sistema", userDtoList);
+    }
+
+    @Override
+    public ApiResponseDto login(UserDto userDto) {
+        if (validationField(userDto.getEmail()) || validationField(userDto.getPassword()))
+            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(), "El usuario o contraseña no vienen informados", null);
+
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getEmail(), userDto.getPassword()));
+        Optional<User> userBD = userRepository.findByEmail(userDto.getEmail());
+        UserDto user = userMapper.toDto(userBD.get());
+
+        TokenDto responseToken = new TokenDto();
+        responseToken.setIdUser(user.getId());
+        responseToken.setName(user.getName());
+        responseToken.setLastName(user.getLastName());
+        responseToken.setIdRole(user.getRole().getId());
+        responseToken.setRole(user.getRole().getName());
+        responseToken.setToken(jwtService.generateToken(userBD.get()));
+        responseToken.setExpiresIn(jwtService.getExpirationTime());
+
+        return new ApiResponseDto<>(HttpStatus.OK.value(),"Bienvenido al sistema",responseToken);
     }
 
     private boolean validationField(String inputField){

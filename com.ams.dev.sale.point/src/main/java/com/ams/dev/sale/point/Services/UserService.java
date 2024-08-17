@@ -18,5 +18,7 @@ public interface UserService {
 
     ApiResponseDto getAllUser();
 
+    ApiResponseDto login(UserDto userDto);
+
 
 }

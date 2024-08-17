@@ -1,10 +1,12 @@
 package com.ams.dev.sale.point.Exceptions;
 
 import com.ams.dev.sale.point.Dtos.ApiResponseDto;
-import org.springframework.http.HttpStatus;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,20 +17,30 @@ import java.security.SignatureException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponseDto> handleException(Exception exception) {
+    public ResponseEntity<ApiResponseDto> handleSecurityException(Exception exception) {
+        ProblemDetail errorDetail = null;
+
+        ApiResponseDto response = new ApiResponseDto();
 
         exception.printStackTrace();
-        ApiResponseDto apiResponse = new ApiResponseDto();
 
+        if (exception instanceof BadCredentialsException) {
+            response.setStatusCode(HttpStatusCode.valueOf(401).value());
+            response.setMessage("El usuario o la contraseña son incorrectos");
 
-        if (exception instanceof IllegalArgumentException) {
-            apiResponse.setStatusCode(HttpStatus.CONFLICT.value());
-            apiResponse.setMessage("EL NOMBRE ROL NO EXISTE");
-            apiResponse.setData(new Object());
+        } else if (exception instanceof AccessDeniedException) {
+            response.setStatusCode(HttpStatusCode.valueOf(403).value());
+            response.setMessage("No estás autorizado para acceder a este recurso.");
+
+        }else if (exception instanceof SignatureException) {
+            response.setStatusCode(HttpStatusCode.valueOf(403).value());
+            response.setMessage("La firma JWT no es valida, verifca por favor");
+
+        }else if (exception instanceof ExpiredJwtException) {
+            response.setStatusCode(HttpStatusCode.valueOf(403).value());
+            response.setMessage("La firma JWT ha expirado");
         }
 
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatusCode()));
-
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatusCode()));
     }
 }
