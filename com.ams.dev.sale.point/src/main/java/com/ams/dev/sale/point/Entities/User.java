@@ -2,6 +2,10 @@ package com.ams.dev.sale.point.Entities;
 
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
 
 @Table(name = "user")
 @Entity
@@ -18,8 +22,8 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false, length = 10)
-    private Integer phone;
+    @Column(nullable = false)
+    private String phone;
 
     @Column(nullable = false)
     private String email;
@@ -28,6 +32,14 @@ public class User {
     private String password;
 
     private String address;
+
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -58,11 +70,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -88,5 +100,29 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
