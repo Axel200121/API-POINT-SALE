@@ -1,36 +1,17 @@
-package com.ams.dev.sale.point.Entities;
+package com.ams.dev.sale.point.Dtos;
 
-
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
+import jakarta.persistence.Column;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.Set;
 
-@Table(name = "role")
-@Entity
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
+public class RoleDto {
     private String id;
-
-    @Column(unique = true, nullable = false)
     private String name;
-
     private String description;
-
-    @CreationTimestamp
-    @Column(updatable = false, name = "created_at")
     private Date createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
     private Date updatedAt;
-
-    @OneToMany(mappedBy = "role")
-    private Set<User> users;
 
     public String getId() {
         return id;
@@ -70,13 +51,5 @@ public class Role {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
     }
 }
