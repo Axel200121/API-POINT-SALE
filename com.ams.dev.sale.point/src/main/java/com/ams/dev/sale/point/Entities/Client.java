@@ -1,7 +1,10 @@
 package com.ams.dev.sale.point.Entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.Date;
 import java.util.Set;
 
 @Table(name = "client")
@@ -27,6 +30,14 @@ public class Client {
 
     @Column(nullable = false)
     private String email;
+
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @OneToMany(mappedBy = "client")
     private Set<Sale> sale;

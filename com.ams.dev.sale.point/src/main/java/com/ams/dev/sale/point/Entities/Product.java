@@ -1,6 +1,10 @@
 package com.ams.dev.sale.point.Entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
 
 @Table(name = "product")
 @Entity
@@ -30,6 +34,14 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "provider_id")
     private Provider provider;
+
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     public String getId() {
         return id;
