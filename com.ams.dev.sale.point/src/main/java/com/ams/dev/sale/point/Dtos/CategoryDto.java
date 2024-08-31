@@ -1,37 +1,17 @@
-package com.ams.dev.sale.point.Entities;
+package com.ams.dev.sale.point.Dtos;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
-import java.util.Set;
 
-@Table(name = "category")
-@Entity
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
+public class CategoryDto {
     private String id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String description;
-
-    @CreationTimestamp
-    @Column(updatable = false, name = "created_at")
     private Date createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
     private Date updatedAt;
-
-    @OneToMany(mappedBy = "category")
-    private Set<Product> product;
 
     public String getId() {
         return id;
@@ -57,14 +37,6 @@ public class Category {
         this.description = description;
     }
 
-    public Set<Product> getProducts() {
-        return product;
-    }
-
-    public void setProducts(Set<Product> products) {
-        this.product = products;
-    }
-
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -79,13 +51,5 @@ public class Category {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Set<Product> getProduct() {
-        return product;
-    }
-
-    public void setProduct(Set<Product> product) {
-        this.product = product;
     }
 }
