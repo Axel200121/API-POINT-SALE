@@ -1,44 +1,18 @@
-package com.ams.dev.sale.point.Entities;
+package com.ams.dev.sale.point.Dtos;
 
-
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
+import jakarta.persistence.Column;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
-import java.util.Set;
 
-@Table(name = "provider")
-@Entity
-public class Provider {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
+public class ProviderDto {
     private String id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String address;
-
-    @Column(nullable = false)
     private String phone;
-
-    @Column(nullable = false)
     private String email;
-
-    @CreationTimestamp
-    @Column(updatable = false, name = "created_at")
     private Date createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
     private Date updatedAt;
-
-    @OneToMany(mappedBy = "provider")
-    private Set<Product> product;
 
     public String getId() {
         return id;
@@ -78,14 +52,6 @@ public class Provider {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Set<Product> getProduct() {
-        return product;
-    }
-
-    public void setProduct(Set<Product> product) {
-        this.product = product;
     }
 
     public Date getCreatedAt() {
