@@ -1,46 +1,24 @@
-package com.ams.dev.sale.point.Entities;
+package com.ams.dev.sale.point.Dtos;
 
-import jakarta.persistence.*;
+import com.ams.dev.sale.point.Entities.Category;
+import com.ams.dev.sale.point.Entities.Provider;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
-@Table(name = "product")
-@Entity
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
+public class ProductDto {
     private String id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
     private Double price;
-
-    @Column(nullable = false)
     private Integer stock;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "provider_id")
-    private Provider provider;
-
-    @CreationTimestamp
-    @Column(updatable = false, name = "created_at")
+    private CategoryDto category;
+    private ProviderDto provider;
     private Date createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
     private Date updatedAt;
 
     public String getId() {
@@ -83,19 +61,19 @@ public class Product {
         this.stock = stock;
     }
 
-    public Category getCategory() {
+    public CategoryDto getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryDto category) {
         this.category = category;
     }
 
-    public Provider getProvider() {
+    public ProviderDto getProvider() {
         return provider;
     }
 
-    public void setProvider(Provider provider) {
+    public void setProvider(ProviderDto provider) {
         this.provider = provider;
     }
 
