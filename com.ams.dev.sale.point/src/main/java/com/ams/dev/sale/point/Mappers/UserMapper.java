@@ -4,10 +4,14 @@ import com.ams.dev.sale.point.Dtos.RoleDto;
 import com.ams.dev.sale.point.Dtos.UserDto;
 import com.ams.dev.sale.point.Entities.Role;
 import com.ams.dev.sale.point.Entities.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
+
+    @Autowired
+    private RoleMapper roleMapper;
 
 
     //Covierte un User a UserDto
@@ -36,7 +40,7 @@ public class UserMapper {
     }
 
     //Covierte un UserDto a Entity
-    public User toEntity(UserDto userDto, Role role) {
+    public User toEntity(UserDto userDto) {
         if (userDto == null)
             return null;
 
@@ -47,8 +51,8 @@ public class UserMapper {
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
         user.setAddress(userDto.getAddress());
+        Role role = roleMapper.toEntity(userDto.getRole());
         user.setRole(role);
-        System.out.println("user en el mapper = " + user);
         return user;
     }
 }

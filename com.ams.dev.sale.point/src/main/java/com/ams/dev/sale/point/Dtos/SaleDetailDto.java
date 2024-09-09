@@ -1,42 +1,13 @@
-package com.ams.dev.sale.point.Entities;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+package com.ams.dev.sale.point.Dtos;
 
 import java.util.Date;
 
-@Table(name = "saleDetail")
-@Entity
-public class SaleDetail {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
+public class SaleDetailDto {
     private String id;
-
-    @Column(nullable = false)
     private Integer quantity;
-
-    @Column(nullable = false)
     private Double unitPrice;
-
-    @ManyToOne
-    @JoinColumn(name = "sale_id")
-    @JsonManagedReference
-    private Sale sale;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    @CreationTimestamp
-    @Column(updatable = false, name = "created_at")
+    private ProductDto product;
     private Date createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
     private Date updatedAt;
 
     public String getId() {
@@ -63,19 +34,11 @@ public class SaleDetail {
         this.unitPrice = unitPrice;
     }
 
-    public Sale getSale() {
-        return sale;
-    }
-
-    public void setSale(Sale sale) {
-        this.sale = sale;
-    }
-
-    public Product getProduct() {
+    public ProductDto getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(ProductDto product) {
         this.product = product;
     }
 
