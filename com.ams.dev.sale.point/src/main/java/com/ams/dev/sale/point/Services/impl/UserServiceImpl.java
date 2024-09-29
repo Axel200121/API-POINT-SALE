@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +59,9 @@ public class UserServiceImpl implements UserService {
             validationField(userDto.getEmail()) || validationField(userDto.getPassword()) || validationField(userDto.getAddress()))
             return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(),"Faltan campos por informar, verifica tus datos",null);
 
+        if (!userDto.getPassword().equals(userDto.getPasswordConfirm()))
+            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(),"Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.",null);
+
         Optional<Role> assignRole = roleRepository.findById(userDto.getRole().getId());
         Role role = assignRole.get();
         User user = new User();
@@ -86,6 +90,9 @@ public class UserServiceImpl implements UserService {
         if (roleBD.isEmpty())
             return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(),"El Rol no existe en la base de datos, verifica su identificador unico",null);
 
+        if (!userDto.getPassword().equals(userDto.getPasswordConfirm()))
+            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(),"Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.",null);
+
         User editUser = userBD.get();
         editUser.setName(userDto.getName());
         editUser.setLastName(userDto.getLastName());
@@ -108,7 +115,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ApiResponseDto deleteUser(String idUser) {
-        return null;
+        Optional<User> userBD = userRepository.findById(idUser);
+        if (userBD.isEmpty())
+            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(),"El usuario ya fue eliminado",null);
+
+        userRepository.deleteById(idUser);
+        return new ApiResponseDto<>(HttpStatus.OK.value(),"El usuario se ha eliminado correctamente",null);
     }
 
     @Override
@@ -121,14 +133,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponseDto getAllUser() {
-        List<User> userList = userRepository.findAll();
+    public ApiResponseDto getAllUser(String roleId) {
+        List<User> userList;
+
+        if (roleId != null && !roleId.isEmpty()) {
+            userList = userRepository.findByRole_Id(roleId);
+        } else {
+            userList = userRepository.findAll();
+        }
+
         if (userList.isEmpty())
-            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(), "No hay registros en la base de datos",null);
+            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(), "No hay registros en la base de datos", null);
 
         List<UserDto> userDtoList = userList.stream().map(userMapper::toDto).collect(Collectors.toList());
 
-        return new ApiResponseDto<>(HttpStatus.OK.value(),"Listado de usuarios del sistema", userDtoList);
+        return new ApiResponseDto<>(HttpStatus.OK.value(), "Listado de usuarios del sistema", userDtoList);
     }
 
     @Override

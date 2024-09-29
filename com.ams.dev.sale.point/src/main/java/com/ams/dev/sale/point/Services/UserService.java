@@ -16,7 +16,7 @@ public interface UserService {
 
     ApiResponseDto getUser(String idUser);
 
-    ApiResponseDto getAllUser();
+    ApiResponseDto getAllUser(String idRole);
 
     ApiResponseDto login(UserDto userDto);
 

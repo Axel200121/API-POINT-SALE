@@ -43,8 +43,8 @@ public class UserController {
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<ApiResponseDto> getAllUser(){
-        ApiResponseDto response = userService.getAllUser();
+    public ResponseEntity<ApiResponseDto> getAllUser(@RequestParam(required = false) String idRole){
+        ApiResponseDto response = userService.getAllUser(idRole);
         return new ResponseEntity<>(response,HttpStatus.valueOf(response.getStatusCode()));
     }
 

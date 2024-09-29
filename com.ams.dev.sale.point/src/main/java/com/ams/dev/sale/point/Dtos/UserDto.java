@@ -9,10 +9,19 @@ public class UserDto {
     private String phone;
     private String email;
     private String password;
+    private String passwordConfirm;
     private String address;
     private RoleDto role;
     private Date createdAt;
     private Date updatedAt;
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
 
     public String getId() {
         return id;
