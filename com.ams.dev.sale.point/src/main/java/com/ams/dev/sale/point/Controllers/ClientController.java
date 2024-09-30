@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/clients")
+@CrossOrigin
 public class ClientController {
 
     @Autowired
@@ -36,6 +37,12 @@ public class ClientController {
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponseDto> getAllClients(){
         ApiResponseDto response = clientService.getAllClients();
+        return new ResponseEntity<>(response,HttpStatusCode.valueOf(response.getStatusCode()));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponseDto> deleteClient(@PathVariable String id){
+        ApiResponseDto response = clientService.deleteClient(id);
         return new ResponseEntity<>(response,HttpStatusCode.valueOf(response.getStatusCode()));
     }
 }

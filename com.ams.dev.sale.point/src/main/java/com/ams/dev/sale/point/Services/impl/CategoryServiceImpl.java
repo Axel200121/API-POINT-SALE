@@ -57,7 +57,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ApiResponseDto deleteCategory(String id) {
-        return null;
+        Optional<Category> categoryBD = categoryRepository.findById(id);
+        if (categoryBD.isEmpty())
+            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(),"No existe esta categoria",null);
+
+        categoryRepository.deleteById(id);
+        return  new ApiResponseDto<>(HttpStatus.OK.value(),"Categoria eliminada exitosamente",null);
     }
 
     @Override

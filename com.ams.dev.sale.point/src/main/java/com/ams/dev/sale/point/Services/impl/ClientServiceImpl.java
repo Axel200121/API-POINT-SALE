@@ -76,7 +76,12 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ApiResponseDto deleteClient(String idClient) {
-        return null;
+        Optional<Client> client = clientRepository.findById(idClient);
+        if (client.isEmpty())
+            return new ApiResponseDto<>(HttpStatus.BAD_REQUEST.value(), "No se encontro el cliente en la BD",null);
+
+        clientRepository.deleteById(idClient);
+        return new ApiResponseDto<>(HttpStatus.OK.value(),"El cliente se elimino de forma correcta",null);
     }
 
     private boolean validateInput(String inputField){

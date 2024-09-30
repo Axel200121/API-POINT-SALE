@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/category")
 @RestController
+@CrossOrigin
 public class CategoryController {
 
     @Autowired
@@ -38,6 +39,12 @@ public class CategoryController {
     @GetMapping("/get-all")
     ResponseEntity<ApiResponseDto> getAllCategories(){
         ApiResponseDto response = categoryService.getAllCategories();
+        return  new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatusCode()));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    ResponseEntity<ApiResponseDto> deleteCategory(@PathVariable String id){
+        ApiResponseDto response = categoryService.deleteCategory(id);
         return  new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatusCode()));
     }
 }
